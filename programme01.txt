@@ -1,0 +1,24 @@
+debut
+
+i=159;
+i = a+3;
+
+selon (i)
+	cas 1:
+		ecrire("nop1");
+		stop;
+	cas 2:
+		ecrire("nop2");
+		stop;
+	cas 5:
+		ecrire("ok");
+		ecrire("test");
+		stop;
+	defaut:
+		ecrire_ligne("nopd");
+		ecrire("ok");alaligne(7);
+		ecrire("7 ok");
+		stop;
+finselon;
+
+fin

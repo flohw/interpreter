@@ -1,3 +1,6 @@
 *.o
-TestLecteur*
+TestLecteurSymbole
+TestLecteurPhraseSimple
+TestLecteurPhraseAvecTable
+TestLecteurPhraseAvecArbre
 projet.1

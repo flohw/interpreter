@@ -2,6 +2,13 @@ debut
 
 i=159;
 i = a+3;
+i++;
+
+si (i == 3)
+	ecrire_ligne("i vaut 3");
+sinonsi (i == 4)
+	ecrire_ligne("i vaut 4");
+finsi;
 
 selon (i)
 	cas 1:

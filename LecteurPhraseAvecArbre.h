@@ -22,7 +22,7 @@ public:
 	inline	TableSymboles getTs ()    { return ts;    } // accesseur	
 	inline	Noeud*        getArbre () { return arbre; } // accesseur
 	void	translateAda();
-	
+	void	translatePhp();	
 
 private:
     LecteurSymbole	ls;    // le lecteur de symboles utilisé pour analyser le fichier

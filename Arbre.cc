@@ -30,6 +30,16 @@ void NoeudSeqInst::translateAda(ostream& s, unsigned short indentation) {
 		s << ";" << endl;
 	}
 }
+void NoeudSeqInst::translatePhp(ostream& s, unsigned short indentation) {
+	for (unsigned int i = 0; i < tabInst.size(); i++) {
+		tabInst[i]->translatePhp(s, indentation+1);
+		if (typeid(*tabInst[i]) != typeid(NoeudInstSi)
+			and typeid(*tabInst[i]) != typeid(NoeudInstBoucle)
+			and typeid(*tabInst[i]) != typeid(NoeudSwitch))
+		s << ";";
+		s << endl;
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudAffectation
@@ -57,8 +67,13 @@ void NoeudAffectation::translateAda(ostream& s, unsigned short indentation) {
 	else
 		expression->translateAda(s, 0);
 }
-Noeud* NoeudAffectation::getVariable() {
-	return this->variable;
+void NoeudAffectation::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	s << "$" << ((SymboleValue*)variable)->getChaine() << " = ";
+	if (typeid(SymboleValue) == typeid(*expression))
+		s << ((SymboleValue*)expression)->getChaine();
+	else
+		expression->translatePhp(s, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,14 +119,28 @@ void NoeudOperateurBinaire::translateAda(ostream& s, unsigned short indentation)
 		s << ((SymboleValue*)operandeGauche)->getChaine();
 	else
 		operandeGauche->translateAda(s, 0);
-	if (this->operateur=="et")		s << " and ";
-	else if (this->operateur=="ou")	s << " or ";
-	else if (this->operateur=="==")	s << " = ";
-	else							s << " " << operateur.getChaine() << " ";
+	if (this->operateur == "et")		s << " and ";
+	else if (this->operateur == "ou")	s << " or ";
+	else if (this->operateur == "==")	s << " = ";
+	else								s << " " << operateur.getChaine() << " ";
 	if (typeid(SymboleValue) == typeid(*operandeDroit))
 		s << ((SymboleValue*)operandeDroit)->getChaine();
 	else
 		operandeDroit->translateAda(s, 0);
+}
+void NoeudOperateurBinaire::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	if (typeid(SymboleValue) == typeid(*operandeGauche))
+		s << ((SymboleValue*)operandeGauche)->getChaine();
+	else
+		operandeGauche->translatePhp(s, 0);
+	if (this->operateur == "et")		s << " AND ";
+	else if (this->operateur == "ou")	s << " OR ";
+	else								s << " " << operateur.getChaine() << " ";
+	if (typeid(SymboleValue) == typeid(*operandeDroit))
+		s << ((SymboleValue*)operandeDroit)->getChaine();
+	else
+		operandeDroit->translatePhp(s, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +167,15 @@ void NoeudEcrire::translateAda(ostream& s, unsigned short indentation) {
 	else
 		valeur->translateAda(s, 0);
 	s << ")";
+}
+void NoeudEcrire::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	s << "echo '";
+	if (typeid(*valeur) == typeid(SymboleValue))
+		s << ((SymboleValue*)valeur)->getChaine().substr(1, ((SymboleValue*)valeur)->getChaine().size()-2);
+	else
+		valeur->translatePhp(s, 0);
+	s << "'";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -215,6 +253,40 @@ void NoeudInstBoucle::translateAda(ostream& s, unsigned short indentation) {
 	}
 }
 
+
+
+void NoeudInstBoucle::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	if (type == "tq")
+	{
+		s << "while ("; expression->translateAda(s, 0); s << ")" << endl << "{" << endl;
+		sequence->translatePhp(s, indentation);
+		Noeud::translatePhp(s, indentation);
+		s << "}";
+	} else if (type == "faire") {
+		s << "do" << endl;
+		s << "{" << endl;
+		sequence->translatePhp(s, indentation);
+		Noeud::translatePhp(s, indentation+1);
+		s << "} while (";
+		expression->translatePhp(s, 0);
+		s << ");";
+	} else if (type == "pour") {
+		s << "for (";
+		affectation->translatePhp(s, 0);
+		s << "; ";
+		expression->translatePhp(s, 0);
+		s << "; ";
+		incrementation->translatePhp(s, 0);
+		s << ")" << endl << "{" << endl;
+		sequence->translatePhp(s, indentation);
+		Noeud::translatePhp(s, indentation);
+		s << "}";
+	}
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudInstSi
 ////////////////////////////////////////////////////////////////////////////////
@@ -279,6 +351,40 @@ void NoeudInstSi::translateAda(ostream& s, unsigned short indentation) {
 	s << "END IF";
 }
 
+void NoeudInstSi::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	s << "if (";
+	unsigned int i(0);
+	while (i < sequence.size())
+	{
+		if (i < expression.size())
+		{
+			if (i != 0)
+			{
+				Noeud::translatePhp(s, indentation);
+				s << "else if (";
+			}
+			s << "$";
+			expression[i]->translatePhp(s, 0);
+			s << ")" << endl; Noeud::translatePhp(s, indentation);
+			s << "{" << endl;
+			sequence[i]->translatePhp(s, indentation);
+			Noeud::translatePhp(s, indentation);
+			s << "}" << endl;
+		}
+		else if (i >= expression.size())
+		{
+			Noeud::translatePhp(s, indentation);
+			s << "else" << endl; Noeud::translatePhp(s, indentation);
+			s << "{" << endl;
+			sequence[i]->translatePhp(s, indentation);
+			Noeud::translatePhp(s, indentation);
+			s << "}" << endl;
+		}
+		i++;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // NoeudLire
 ////////////////////////////////////////////////////////////////////////////////
@@ -299,6 +405,12 @@ void NoeudLire::translateAda(ostream& s, unsigned short indentation) {
 	s << "LIRE (";
 	s << ((SymboleValue*)variable)->getChaine();
 	s << ")";
+}
+void NoeudLire::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	s << "echo '<input type=\"text\" name=\"";
+	s << ((SymboleValue*)variable)->getChaine().substr(1, ((SymboleValue*)variable)->getChaine().size()-2);
+	s << "\" />'";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +483,33 @@ void NoeudSwitch::translateAda(ostream& s, unsigned short indentation) {
 	Noeud::translateAda(s, indentation);
 	s << "END CASE";
 }
+void NoeudSwitch::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	unsigned int i(0);
+	s << "switch ($" << ((SymboleValue*)variable)->getChaine() << ")" << endl;
+	Noeud::translatePhp(s, indentation);
+	s << "{" << endl;
+	while (i < entiers.size()) {
+		Noeud::translatePhp(s, indentation+1);
+		s << "case ";
+		s << ((SymboleValue*)entiers[i])->getValeur();
+		s << ":" << endl;
+		sequence[i]->translatePhp(s, indentation+1);
+		Noeud::translatePhp(s, indentation+2);
+		s << "break;" << endl;
+		i++;
+	}
+	
+	if (sequence.size() > entiers.size()) {
+		Noeud::translatePhp(s, indentation+1);
+		s << "default:" << endl;
+		sequence[i]->translatePhp(s, indentation+1);
+		Noeud::translatePhp(s, indentation+2);
+		s << "break;" << endl;
+	}
+	Noeud::translatePhp(s, indentation);
+	s << "}";
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // NoeudIncrementation
@@ -404,20 +543,32 @@ void NoeudIncrementation::afficher(unsigned short indentation) {
 }
 void NoeudIncrementation::translateAda(ostream& s, unsigned short indentation) {
 	Noeud::translateAda(s, indentation);
+	
+	s << ((SymboleValue*)variable)->getChaine() << " := " << ((SymboleValue*)variable)->getChaine();
+	
+	if (incrementation.getChaine() == "++")
+		s << " + 1";
+	else if (incrementation.getChaine() == "--")
+		s << " - 1";
+	else if (incrementation.getChaine() == "+=")
+		s << " +";
+	else if (incrementation.getChaine() == "-=")
+		s << " -";
+	else if (incrementation.getChaine() == "*=")
+		s << " *";
+	else if (incrementation.getChaine() == "/=")
+		s << " /";
+	
+	if (expression != NULL and typeid(*expression) == typeid(SymboleValue))
+		s << " " << ((SymboleValue*)expression)->getChaine();
+	else if (expression != NULL)
+		expression->translateAda(s);
+}
+void NoeudIncrementation::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translateAda(s, indentation);
 	SymboleValue* var = ((SymboleValue*)variable);
-	if (incrementation.getChaine() == "++") {
-		s << var->getChaine() << " := " << var->getChaine() << " + 1";
-	} else if (incrementation.getChaine() == "--") {
-		s << var->getChaine() << " := " << var->getChaine() << " - 1";
-	} else if (incrementation.getChaine() == "+=") {
-		s << var->getChaine() << " := " << var->getChaine() << " +";
-	} else if (incrementation.getChaine() == "-=") {
-		s << var->getChaine() << " := " << var->getChaine() << " -";
-	} else if (incrementation.getChaine() == "*=") {
-		s << var->getChaine() << " := " << var->getChaine() << " *";
-	} else if (incrementation.getChaine() == "/=") {
-		s << var->getChaine() << " := " << var->getChaine() << " /";
-	}
+	s << "$" << var->getChaine() << incrementation.getChaine();
+	
 	if (expression != NULL and typeid(*expression) == typeid(SymboleValue))
 		s << " " << ((SymboleValue*)expression)->getChaine();
 	else if (expression != NULL)
@@ -432,9 +583,7 @@ NoeudSautLigne::NoeudSautLigne(Noeud* ent) :
 
 int NoeudSautLigne::getValeur() {
 	for (int i = 0; i < entier->getValeur(); ++i)
-	{
 		cout << endl;
-	}
 	return entier->getValeur();
 }
 
@@ -443,10 +592,16 @@ void NoeudSautLigne::afficher(unsigned short indentation){
  	cout << "Noeud - Saut de Ligne " << endl;
 	entier->afficher(indentation+1);
 }
-
 void NoeudSautLigne::translateAda(ostream& s, unsigned short indentation){
 	Noeud::translateAda(s, indentation);
 	s << "A_LA_LIGNE (" << ((SymboleValue*)entier)->getChaine() << ")";
+}
+void NoeudSautLigne::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	s << "echo '";
+	for (int i = 0; i < entier->getValeur(); ++i)
+		s << "<br />";
+	s << "'";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -465,7 +620,6 @@ int NoeudEcrLigne::getValeur() {
 		cout << endl;
 	return 0;
 }
-
 void NoeudEcrLigne::afficher(unsigned short indentation){
 	Noeud::afficher(indentation);
 	cout << "Noeud - Ecrire Ligne" << endl;
@@ -473,10 +627,14 @@ void NoeudEcrLigne::afficher(unsigned short indentation){
 		entier->afficher(indentation+1);
  	
 }
-
 void NoeudEcrLigne::translateAda(ostream& s, unsigned short indentation){
 	Noeud::translateAda(s, indentation);
 	s << "ECRIRE_LIGNE (" << ((SymboleValue*)valeur)->getChaine() << ")";
+}
+void NoeudEcrLigne::translatePhp(ostream& s, unsigned short indentation) {
+	Noeud::translatePhp(s, indentation);
+	string chaine = ((SymboleValue*)valeur)->getChaine();
+	s << "echo '" << chaine.substr(1, chaine.size()-2) << "<br />'";
 }
 
 

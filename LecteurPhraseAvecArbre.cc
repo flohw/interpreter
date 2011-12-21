@@ -480,6 +480,39 @@ void LecteurPhraseAvecArbre::translateAda() {
 	}
 }
 
+void LecteurPhraseAvecArbre::translatePhp() {
+	unsigned int m(0);
+	cout << "Traduction en PHP" << endl;
+	cout << "1. Dans un fichier" << endl;
+	cout << "2. Sur la console" << endl;
+	do {
+		cout << "Choix menu ? (1 ou 2) ";
+		cin >> m;
+	} while (m < 1 or m > 2);
+	switch (m) {
+		case 1: {
+			string f("");
+			cout << "Nom du fichier (extension php ajoutee automatiquement) ? ";
+			cin >> f;
+			f += ".php";
+			fichier.open(f.c_str(), ios_base::out);
+			if (fichier.fail()) {
+				cout << "Impossible de creer le fichier " << f << endl;
+				exit(0);
+			}
+			fichier << "<?php" << endl;
+			this->getArbre()->translatePhp(fichier);
+			fichier << "?>" << endl;
+			fichier.close();
+			break; }
+		case 2: {
+			cout << "<?php" << endl;
+			this->getArbre()->translatePhp(cout);
+			cout << "?>" << endl;
+			break; }
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void LecteurPhraseAvecArbre::testerSymCour(string ch) {
 	if (ls.getSymCour() != ch) {

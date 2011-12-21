@@ -15,15 +15,18 @@ int main(int argc, char* argv[]) {
 
 		LecteurPhraseAvecArbre lp(nomFich);
 		lp.analyse();
-		cout << endl << "Arbre Abstrait : " << endl;
-		cout         << "================"  << endl;
-		lp.getArbre()->afficher();
-		cout << endl << "Table des symboles avant evaluation : " << lp.getTs();
-		cout << endl << "Evaluation de l'arbre (interpretation)..." << endl;
-		lp.getArbre()->getValeur();
-		cout << endl << "Table des symboles apres evaluation : " << lp.getTs();
-		cout << endl << endl << endl;
-		lp.translateAda();
+//		cout << endl << "Arbre Abstrait : " << endl;
+//		cout         << "================"  << endl;
+//		lp.getArbre()->afficher();
+//		cout << endl << "Table des symboles avant evaluation : " << lp.getTs();
+//		cout << endl << "Evaluation de l'arbre (interpretation)..." << endl;
+//		lp.getArbre()->getValeur();
+//		cout << endl << "Table des symboles apres evaluation : " << lp.getTs();
+//		cout << endl << endl << endl;
+//		cout << "-----------------ADA---------------" << endl;
+//		lp.translateAda();
+		cout << "-----------------PHP---------------" << endl;
+		lp.translatePhp();
 		return 0;
 		}
 

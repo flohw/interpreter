@@ -19,6 +19,7 @@ class Noeud {
     virtual void afficher(unsigned short indentation=0) { cout << setw(4*indentation) << " "; }
 	virtual void translateAda(ostream& s, unsigned short indentation=0) { s << setw(4*indentation) << ""; }
       // pour afficher un noeud avec un décalage (indentation) proportionnel à son niveau dans l'arbre
+	virtual void translatePhp(ostream &s, unsigned short indentation=0) { s << setw(4*indentation) << ""; }
 
     virtual ~Noeud() {} // présence d'un destructeur virtuel conseillée dans les classes abstraites
 };
@@ -32,9 +33,10 @@ class NoeudSeqInst : public Noeud {
     ~NoeudSeqInst() {} // à cause du destructeur virtuel de la classe Noeud
     int getValeur(); // évalue chaque instruction de la séquence
     void afficher(unsigned short indentation=0); // affiche la séquence d'instructions
-	void translateAda(ostream& s, unsigned short indentation=0);
     void ajouteInstruction(Noeud* instruction);  // ajoute une instruction à la séquence
-
+	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
+	
   private:
     vector<Noeud *> tabInst; // pour stocker les instructions de la séquence
 };
@@ -49,7 +51,7 @@ class NoeudAffectation : public Noeud {
     int getValeur(); // évalue l'expression et affecte sa valeur à la variable
     void afficher(unsigned short indentation=0); // affiche l'affectation
 	void translateAda(ostream& s, unsigned short indentation=0);
-	Noeud* getVariable();
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
   private:
     Noeud* variable;
@@ -67,6 +69,7 @@ class NoeudOperateurBinaire : public Noeud {
     int getValeur(); // évalue l'operande gauche, l'operande droit et applique l'opérateur
     void afficher(unsigned short indentation=0); // affiche l'opération
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
   private:
     Symbole operateur;
@@ -82,6 +85,7 @@ public:
     int getValeur(); // retourne le symbole (chaine ou expression)
     void afficher(unsigned short indentation=0); // affiche l'opération
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
   protected:
     Noeud*	valeur;
@@ -95,6 +99,7 @@ public:
 	int getValeur(); // retourne le symbole (chaine ou expression)
     void afficher(unsigned short indentation=0); // affiche l'opération
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
 private:
     Noeud* expression;
@@ -112,6 +117,7 @@ public:
 	int getValeur(); // retourne le symbole (chaine ou expression)
     void afficher(unsigned short indentation=0); // affiche l'opération
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
 private:
 	vector<Noeud*> expression;
@@ -126,6 +132,7 @@ public:
 	int getValeur();
 	void afficher(unsigned short indentation = 0);
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 	
 private:
 	Noeud* variable;
@@ -140,6 +147,7 @@ class NoeudSwitch : public Noeud {
     int getValeur();
     void afficher(unsigned short indentation=0);
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 
   private:
   	vector<Noeud*> entiers;
@@ -155,6 +163,7 @@ class NoeudIncrementation : public Noeud {
     int getValeur(); // évalue chaque instruction de la séquence
     void afficher(unsigned short indentation=0); // affiche la séquence d'instructions
 	void translateAda(ostream& s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 	
   private:
 	Noeud* variable;
@@ -170,6 +179,7 @@ public:
 	int getValeur();
 	void afficher(unsigned short indentation=0);
 	void translateAda(ostream &s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
 	
   protected:
   Noeud* entier;
@@ -182,6 +192,8 @@ public:
 	int getValeur();
 	void afficher(unsigned short indentation=0);
 	void translateAda(ostream &s, unsigned short indentation=0);
+	void translatePhp(ostream& s, unsigned short indentation=0);
+	
 private:
 	Noeud* valeur;
 	Noeud* entier;

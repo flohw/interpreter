@@ -7,11 +7,11 @@ int main(int argc, char* argv[]) {
 	if (argc != 2) {
 		cout << "Usage : " << argv[0] << " nom_fichier_source" << endl << endl;
 		cout << "Entrez le nom du fichier que vous voulez analyser : ";
-		cin.getline(nomFich, sizeof(nomFich));
+		cin.getline(nomFich, sizeof (nomFich));
 	} else
-		strncpy(nomFich, argv[1], sizeof(nomFich));
+		strncpy(nomFich, argv[1], sizeof (nomFich));
 
 	LecteurPhraseAvecTable lp(nomFich);
-	lp.analyse();        // on lance l'analyse
-	cout << lp.getTs();  // on affiche la table des symboles
+	lp.analyse(); // on lance l'analyse
+	cout << lp.getTs(); // on affiche la table des symboles
 }

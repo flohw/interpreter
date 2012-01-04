@@ -1,3 +1,18 @@
 debut
 
-fin;
+	j = 3;
+
+	# on doit entrer dans le premier "sinonsi"
+	si ((j != 3))
+		ecrire_ligne("on est entré dans si ((j != 3))");
+	sinonsi ((j == 3))
+		ecrire_ligne("On est entré dans sinonsi ((j == 3))");
+	sinonsi ((j >= 3))
+		ecrire_ligne("On est entré dans sinonsi ((j >= 3))");
+	sinonsi ((j == 9))
+		ecrire_ligne("On est entré dans sinonsi ((j == 9))");
+	sinon
+		ecrire_ligne("On est entré dans sinon");
+	finsi;
+
+fin

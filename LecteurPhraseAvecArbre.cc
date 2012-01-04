@@ -6,17 +6,20 @@
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
+
 LecteurPhraseAvecArbre::LecteurPhraseAvecArbre(string nomFich) :
-	ls(nomFich), ts(), fichier() {
+ls(nomFich), ts(), fichier() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseAvecArbre::analyse() {
 	arbre = programme();
 	cout << "Syntaxe correcte." << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::programme() {
 	// <programme> ::= debut <seq_inst> fin FIN_FICHIER
 
@@ -28,6 +31,7 @@ Noeud* LecteurPhraseAvecArbre::programme() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::seqInst() {
 	// <seqInst> ::= <inst> ; { <inst> ; }
 	NoeudSeqInst* si = new NoeudSeqInst();
@@ -35,7 +39,7 @@ Noeud* LecteurPhraseAvecArbre::seqInst() {
 		si->ajouteInstruction(inst());
 		sauterSymCour(";");
 	} while (ls.getSymCour() == "si" || ls.getSymCour() == "ecrire" || ls.getSymCour() == "lire" ||
-			ls.getSymCour() == "tq" || ls.getSymCour() == "faire" || ls.getSymCour() == "pour" || 
+			ls.getSymCour() == "tq" || ls.getSymCour() == "faire" || ls.getSymCour() == "pour" ||
 			ls.getSymCour() == "selon" || ls.getSymCour() == "alaligne" || ls.getSymCour() == "ecrire_ligne" ||
 			ls.getSymCour() == "<VARIABLE>");
 	// tant que le symbole courant est un debut possible d'instruction...
@@ -53,8 +57,9 @@ Noeud* LecteurPhraseAvecArbre::seqInst() {
 //}
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::inst() {
-// <inst> ::= <affectation> | <inst_condi>
+	// <inst> ::= <affectation> | <inst_condi>
 	if (ls.getSymCour() == "ecrire")
 		return instEcrire();
 	else if (ls.getSymCour() == "alaligne")
@@ -79,22 +84,23 @@ Noeud* LecteurPhraseAvecArbre::inst() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instEcrire() {
-// <instEcrire> ::= ecrire(<chaine> | <expression>)
+	// <instEcrire> ::= ecrire(<chaine> | <expression>)
 	sauterSymCour("ecrire");
 	sauterSymCour("(");
 	Noeud* var;
 	if (ls.getSymCour() == "<CHAINE>") {
 		var = ts.chercheAjoute(ls.getSymCour());
 		ls.suivant();
-	}
-	else
+	} else
 		var = expression();
 	sauterSymCour(")");
 	return new NoeudEcrire(var);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instEcrLigne() {
 	sauterSymCour("ecrire_ligne");
 	sauterSymCour("(");
@@ -102,20 +108,20 @@ Noeud* LecteurPhraseAvecArbre::instEcrLigne() {
 	if (ls.getSymCour() == "<CHAINE>") {
 		var = ts.chercheAjoute(ls.getSymCour());
 		ls.suivant();
-	}
-	else
+	} else
 		var = expression();
-	sauterSymCour(")");	
+	sauterSymCour(")");
 	return new NoeudEcrLigne(var, ts.chercheAjoute(Symbole("1")));
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instLire() {
-//	<instLire> ::= lire(<VARIABLE>)
+	//	<instLire> ::= lire(<VARIABLE>)
 	sauterSymCour("lire");
 	sauterSymCour("(");
-	
+
 	testerSymCour("<VARIABLE>");
 	Noeud* var = ts.chercheAjoute(ls.getSymCour());
 	ls.suivant();
@@ -124,8 +130,9 @@ Noeud* LecteurPhraseAvecArbre::instLire() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instFaire() {
-//	<instFaire> ::= faire <seqInst> jusqua ( <expBool> )
+	//	<instFaire> ::= faire <seqInst> jusqua ( <expBool> )
 	sauterSymCour("faire");
 	Noeud* seq = seqInst();
 	sauterSymCour("jusqua");
@@ -136,8 +143,9 @@ Noeud* LecteurPhraseAvecArbre::instFaire() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instTq() {
-//	<instTq> ::= tq ( <expBool> ) <seqInst> fintq
+	//	<instTq> ::= tq ( <expBool> ) <seqInst> fintq
 	Noeud *exp, *seq;
 	sauterSymCour("tq");
 	sauterSymCour("(");
@@ -145,13 +153,14 @@ Noeud* LecteurPhraseAvecArbre::instTq() {
 	sauterSymCour(")");
 	seq = seqInst();
 	sauterSymCour("fintq");
-	
+
 	return new NoeudInstBoucle(exp, seq, "tq");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instPour() {
-//	<instPour> ::= pour ( <affectation> ; <expBool> ; <affectation> ) <seqInst> finpour
+	//	<instPour> ::= pour ( <affectation> ; <expBool> ; <affectation> ) <seqInst> finpour
 	sauterSymCour("pour");
 	sauterSymCour("(");
 	Noeud* aff = affectation();
@@ -166,11 +175,12 @@ Noeud* LecteurPhraseAvecArbre::instPour() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::instSi() {
-//	<instSi> ::= si ( <expBool> ) <seqInst> { sinonsi ( <expBool> ) <seqInst> } [ sinon <seqInst> ] finsi
+	//	<instSi> ::= si ( <expBool> ) <seqInst> { sinonsi ( <expBool> ) <seqInst> } [ sinon <seqInst> ] finsi
 	vector<Noeud*> exp;
 	vector<Noeud*> seq;
-	
+
 	sauterSymCour("si");
 	sauterSymCour("(");
 	exp.push_back(expBool());
@@ -192,8 +202,9 @@ Noeud* LecteurPhraseAvecArbre::instSi() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Noeud*  LecteurPhraseAvecArbre::instSwitch() {
-//<instSwitch> ::= switch (<VARIABLE>) { case <ENTIER>: <seqInst> break; } [default: <seqInst> break;] endswitch
+
+Noeud* LecteurPhraseAvecArbre::instSwitch() {
+	//<instSwitch> ::= switch (<VARIABLE>) { case <ENTIER>: <seqInst> break; } [default: <seqInst> break;] endswitch
 
 	vector<Noeud*> ent;
 	vector<Noeud*> seq;
@@ -204,7 +215,7 @@ Noeud*  LecteurPhraseAvecArbre::instSwitch() {
 	Noeud* var = ts.chercheAjoute(ls.getSymCour());
 	ls.suivant();
 	sauterSymCour(")");
-	
+
 	while (ls.getSymCour() == "cas") {
 		sauterSymCour("cas");
 		testerSymCour("<ENTIER>");
@@ -216,7 +227,7 @@ Noeud*  LecteurPhraseAvecArbre::instSwitch() {
 		sauterSymCour("stop");
 		sauterSymCour(";");
 	}
-	
+
 	if (ls.getSymCour() == "defaut") {
 		ls.suivant();
 		sauterSymCour(":");
@@ -229,126 +240,131 @@ Noeud*  LecteurPhraseAvecArbre::instSwitch() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-Noeud*	LecteurPhraseAvecArbre::instSautLigne() {
-//	va à la ligne NB fois avec NB qui suit alaligne
+
+Noeud* LecteurPhraseAvecArbre::instSautLigne() {
+	//	va à la ligne NB fois avec NB qui suit alaligne
 	Noeud* entier;
 	sauterSymCour("alaligne");
 	sauterSymCour("(");
-		if (ls.getSymCour() == "<ENTIER>") {
-			entier = ts.chercheAjoute(ls.getSymCour());
-			ls.suivant();
-		}
-		else {
-			entier = ts.chercheAjoute(Symbole("1"));
-		}
+	if (ls.getSymCour() == "<ENTIER>") {
+		entier = ts.chercheAjoute(ls.getSymCour());
+		ls.suivant();
+	} else {
+		entier = ts.chercheAjoute(Symbole("1"));
+	}
 	sauterSymCour(")");
 	return new NoeudSautLigne(entier);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::affectation() {
-// <affectation> ::= <variable> = <expression> || <variable> "++" | "--" || <variable> += <expression> || <variable> -= <expression> 
+	// <affectation> ::= <variable> = <expression> || <variable> "++" | "--" || <variable> += <expression> || <variable> -= <expression> 
 	testerSymCour("<VARIABLE>");
 	Noeud* var = ts.chercheAjoute(ls.getSymCour());
 	ls.suivant();
-	if (ls.getSymCour()=="--" || ls.getSymCour()=="++") {
+	if (ls.getSymCour() == "--" || ls.getSymCour() == "++") {
 		Symbole incre = ls.getSymCour();
 		ls.suivant();
-		return new NoeudIncrementation(var,incre);
-	}
-	else if (ls.getSymCour()=="+=" || ls.getSymCour()=="-=" || ls.getSymCour()=="*=" || ls.getSymCour()=="/=") {
+		return new NoeudIncrementation(var, incre);
+	} else if (ls.getSymCour() == "+=" || ls.getSymCour() == "-=" || ls.getSymCour() == "*=" || ls.getSymCour() == "/=") {
 		Symbole incre = ls.getSymCour();
 		ls.suivant();
 		Noeud* exp = expression();
-		return new NoeudIncrementation(var,incre,exp);
-	}
-	else {
+		return new NoeudIncrementation(var, incre, exp);
+	} else {
 		sauterSymCour("=");
 		Noeud* exp = expression();
-		return new NoeudAffectation(var,exp);
+		return new NoeudAffectation(var, exp);
 	}
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::terme() {
-//  <terme> ::= <facteur> { <opMult> <facteur> }
+	//  <terme> ::= <facteur> { <opMult> <facteur> }
 	Noeud* fact = facteur();
 	while (ls.getSymCour() == "*" || ls.getSymCour() == "/") {
 		Symbole operateur = opMult(); // on stocke le symbole de l'opérateur
 		Noeud* factDroit = facteur(); // lecture de l'operande droit
-		fact = new NoeudOperateurBinaire(operateur,fact,factDroit); // const. du noeud
+		fact = new NoeudOperateurBinaire(operateur, fact, factDroit); // const. du noeud
 	}
 	return fact;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::expression() {
-// <expression> ::= <terme> { <opAd> <terme> }
+	// <expression> ::= <terme> { <opAd> <terme> }
 	Noeud* termeGauche = terme();
-	while (ls.getSymCour()=="+" || ls.getSymCour()=="-") {
+	while (ls.getSymCour() == "+" || ls.getSymCour() == "-") {
 		Symbole operateur = opAdd(); // on stocke le symbole de l'opérateur
 		Noeud* termeDroit = terme(); // lecture de l'operande droit
-		termeGauche = new NoeudOperateurBinaire(operateur,termeGauche,termeDroit); // const. du noeud
+		termeGauche = new NoeudOperateurBinaire(operateur, termeGauche, termeDroit); // const. du noeud
 	}
 	return termeGauche;
 }
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::relation() {
-// <relation> ::= <expression> { <opRel> <expression> }
+	// <relation> ::= <expression> { <opRel> <expression> }
 	Noeud* expGauche = expression();
-	while (ls.getSymCour()=="==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<" ||
+	while (ls.getSymCour() == "==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<" ||
 			ls.getSymCour() == ">" || ls.getSymCour() == "<=" || ls.getSymCour() == ">=") {
 		Symbole operateur = opRel(); // on stocke le symbole de l'opérateur
 		Noeud* expDroit = expression(); // lecture de l'operande droit
-		expGauche = new NoeudOperateurBinaire(operateur,expGauche,expDroit); // const. du noeud
+		expGauche = new NoeudOperateurBinaire(operateur, expGauche, expDroit); // const. du noeud
 	}
 	return expGauche;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::termeBool() {
-// <termeBool> ::= <relation> { <opEt> <relation> }
+	// <termeBool> ::= <relation> { <opEt> <relation> }
 	Noeud* relationGauche = relation();
-	while (ls.getSymCour()=="et") {
+	while (ls.getSymCour() == "et") {
 		Symbole operateur = opEt(); // on stocke le symbole de l'opérateur
 		Noeud* relationDroit = relation(); // lecture de l'operande droit
-		relationGauche = new NoeudOperateurBinaire(operateur,relationGauche,relationDroit); // const. du noeud
+		relationGauche = new NoeudOperateurBinaire(operateur, relationGauche, relationDroit); // const. du noeud
 	}
 	return relationGauche;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::expBool() {
-// <expBool> ::= <termeBool> { <opOu> <termeBool> }
+	// <expBool> ::= <termeBool> { <opOu> <termeBool> }
 	Noeud* expGauche = termeBool();
-	while (ls.getSymCour()=="ou") {
+	while (ls.getSymCour() == "ou") {
 		Symbole operateur = opOu(); // on stocke le symbole de l'opérateur
 		Noeud* expDroit = relation(); // lecture de l'operande droit
-		expGauche = new NoeudOperateurBinaire(operateur,expGauche,expDroit); // const. du noeud
+		expGauche = new NoeudOperateurBinaire(operateur, expGauche, expDroit); // const. du noeud
 	}
 	return expGauche;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Noeud* LecteurPhraseAvecArbre::facteur() {
-// <facteur> ::= <entier>  |  <variable>  |  <opUnaire> <expBool>  |  ( <expBool> )
+	// <facteur> ::= <entier>  |  <variable>  |  <opUnaire> <expBool>  |  ( <expBool> )
 
-	Noeud* fact=NULL;
+	Noeud* fact = NULL;
 
-	if (ls.getSymCour()=="<VARIABLE>" || ls.getSymCour()=="<ENTIER>") {
+	if (ls.getSymCour() == "<VARIABLE>" || ls.getSymCour() == "<ENTIER>") {
 		fact = ts.chercheAjoute(ls.getSymCour());
 		ls.suivant();
-	} else if (ls.getSymCour()=="-" || ls.getSymCour() == "non") {
+	} else if (ls.getSymCour() == "-" || ls.getSymCour() == "non") {
 		Symbole sym = ls.getSymCour();
 		ls.suivant();
 		// on représente le moins unaire (- facteur) par une soustractin binaire (0 - facteur)
 		fact = new NoeudOperateurBinaire(sym, ts.chercheAjoute(Symbole("0")), expBool());
-	} else if (ls.getSymCour()=="(") {
+	} else if (ls.getSymCour() == "(") {
 		ls.suivant();
-		fact=expBool();
+		fact = expBool();
 		sauterSymCour(")");
 	} else
 		erreur("<facteur>");
@@ -356,80 +372,80 @@ Noeud* LecteurPhraseAvecArbre::facteur() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opAdd() {
-// <opAdd> ::= + | -
+	// <opAdd> ::= + | -
 	Symbole operateur;
-	if (ls.getSymCour()=="+" || ls.getSymCour()=="-") {
-		operateur=ls.getSymCour();
+	if (ls.getSymCour() == "+" || ls.getSymCour() == "-") {
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opAdd>");
 	return operateur;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opMult() {
-// <opMult> ::= * | /
+	// <opMult> ::= * | /
 	Symbole operateur;
-	if (ls.getSymCour()=="*" || ls.getSymCour()=="/") {
-		operateur=ls.getSymCour();
+	if (ls.getSymCour() == "*" || ls.getSymCour() == "/") {
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opMult>");
 	return operateur;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opEt() {
-// <opEt> ::= et
+	// <opEt> ::= et
 	Symbole operateur;
-	if (ls.getSymCour()=="et") {
-		operateur=ls.getSymCour();
+	if (ls.getSymCour() == "et") {
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opEt>");
 	return operateur;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opOu() {
-// <opOu> ::= ou
+	// <opOu> ::= ou
 	Symbole operateur;
-	if (ls.getSymCour()=="ou") {
-		operateur=ls.getSymCour();
+	if (ls.getSymCour() == "ou") {
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opOu>");
 	return operateur;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opRel() {
-// <opRel> ::= == | != | < | > | <= | >=
+	// <opRel> ::= == | != | < | > | <= | >=
 	Symbole operateur;
-	if (ls.getSymCour()=="==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<" ||
+	if (ls.getSymCour() == "==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<" ||
 			ls.getSymCour() == ">" || ls.getSymCour() == "<=" || ls.getSymCour() == ">=") {
-		operateur=ls.getSymCour();
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opRel>");
 	return operateur;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 Symbole LecteurPhraseAvecArbre::opUnaire() {
-// <opUnaire> ::= ! | -
+	// <opUnaire> ::= ! | -
 	Symbole operateur;
-	if (ls.getSymCour()=="non" || ls.getSymCour() == "-") {
-		operateur=ls.getSymCour();
+	if (ls.getSymCour() == "non" || ls.getSymCour() == "-") {
+		operateur = ls.getSymCour();
 		ls.suivant();
-	}
-	else
+	} else
 		erreur("<opUnaire>");
 	return operateur;
 }
@@ -437,6 +453,7 @@ Symbole LecteurPhraseAvecArbre::opUnaire() {
 ////////////////////////////////////////////////////////////////////////////////
 // Methodes publiques
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseAvecArbre::translateAda() {
 	unsigned int m(0);
 	cout << "Traduction en ADA" << endl;
@@ -447,36 +464,38 @@ void LecteurPhraseAvecArbre::translateAda() {
 		cin >> m;
 	} while (m < 1 or m > 2);
 	switch (m) {
-		case 1: {
-			string f("");
+		case 1:
+		{
+			string f(""), proc("");
 			cout << "Nom du fichier (extension adb ajoutee automatiquement) ? ";
-			cin >> f;
-			f += ".adb";
+			cin >> proc;
+			f = proc + ".adb";
 			fichier.open(f.c_str(), ios_base::out);
 			if (fichier.fail()) {
 				cout << "Impossible de creer le fichier " << f << endl;
 				exit(0);
 			}
-			fichier << "WITH p_esiut; USE p_esiut;" << endl << "PROCEDURE " << f << " IS" << endl;
-			for (unsigned int i = ts.getFirstVariable(); i < ts.getNbVariables(); i++)
-			{
-				cout << setw(5) << ts.getNomVariable(i) << " : integer;" << endl;
+			fichier << "WITH p_esiut; USE p_esiut;" << endl << "PROCEDURE " << proc << " IS" << endl;
+			for (unsigned int i = ts.getFirstVariable(); i < ts.getNbVariables(); i++) {
+				fichier << setw(5) << ts.getNomVariable(i) << " : integer;" << endl;
 			}
 			fichier << "BEGIN" << endl;
 			this->getArbre()->translateAda(fichier);
-			fichier << "END " << f << ";";
+			fichier << "END " << proc << ";";
 			fichier.close();
-			break; }
-		case 2: {
+			break;
+		}
+		case 2:
+		{
 			cout << "WITH p_esiut; USE p_esiut;" << endl << "PROCEDURE main IS" << endl;
-			for (unsigned int i = ts.getFirstVariable(); i < ts.getNbVariables(); i++)
-			{
+			for (unsigned int i = ts.getFirstVariable(); i < ts.getNbVariables(); i++) {
 				cout << setw(5) << ts.getNomVariable(i) << " : integer;" << endl;
 			}
 			cout << "BEGIN" << endl;
 			this->getArbre()->translateAda(cout);
 			cout << "END main;" << endl;
-			break; }
+			break;
+		}
 	}
 }
 
@@ -490,7 +509,8 @@ void LecteurPhraseAvecArbre::translatePhp() {
 		cin >> m;
 	} while (m < 1 or m > 2);
 	switch (m) {
-		case 1: {
+		case 1:
+		{
 			string f("");
 			cout << "Nom du fichier (extension php ajoutee automatiquement) ? ";
 			cin >> f;
@@ -504,16 +524,20 @@ void LecteurPhraseAvecArbre::translatePhp() {
 			this->getArbre()->translatePhp(fichier);
 			fichier << "?>" << endl;
 			fichier.close();
-			break; }
-		case 2: {
+			break;
+		}
+		case 2:
+		{
 			cout << "<?php" << endl;
 			this->getArbre()->translatePhp(cout);
 			cout << "?>" << endl;
-			break; }
+			break;
+		}
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseAvecArbre::testerSymCour(string ch) {
 	if (ls.getSymCour() != ch) {
 		cout << endl << "-------- Erreur ligne " << ls.getLigne()
@@ -525,12 +549,14 @@ void LecteurPhraseAvecArbre::testerSymCour(string ch) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseAvecArbre::sauterSymCour(string ch) {
 	testerSymCour(ch);
 	ls.suivant();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseAvecArbre::erreur(string mess) {
 	cout << endl << "-------- Erreur ligne " << ls.getLigne() << " - Colonne "
 			<< ls.getColonne() << endl << "   Attendu : " << mess << endl

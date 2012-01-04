@@ -5,93 +5,84 @@
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
+
 LecteurSymbole::LecteurSymbole(string nomFich) :
-	lc(nomFich), symCour("") {
+lc(nomFich), symCour("") {
 	suivant(); // pour lire le premier symbole
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurSymbole::suivant() {
-    sauterSeparateurs();
+	sauterSeparateurs();
 	while (lc.getCarCour() == '#')
 		sauterCommentaires();
 	// on est maintenant positionne sur le premier caractère d'un symbole
-	ligne=lc.getLigne();
-	colonne=lc.getColonne();
-	symCour=Symbole(motSuivant()); // on reconstruit symCour avec le nouveau mot lu
+	ligne = lc.getLigne();
+	colonne = lc.getColonne();
+	symCour = Symbole(motSuivant()); // on reconstruit symCour avec le nouveau mot lu
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurSymbole::sauterSeparateurs() {
-	while (lc.getCarCour()==' '  ||
-		   lc.getCarCour()=='\t' ||
-		   lc.getCarCour()=='\r' ||
-		   lc.getCarCour()=='\n')
+	while (lc.getCarCour() == ' ' ||
+			lc.getCarCour() == '\t' ||
+			lc.getCarCour() == '\r' ||
+			lc.getCarCour() == '\n')
 		lc.suivant();
 }
 
 void LecteurSymbole::sauterCommentaires() {
-    if (lc.getCarCour() == '#')
-    {
-        while (lc.getCarCour() != '\n' and lc.getCarCour() != '\r'){
-            lc.suivant();
+	if (lc.getCarCour() == '#') {
+		while (lc.getCarCour() != '\n' and lc.getCarCour() != '\r') {
+			lc.suivant();
 		}
-    }
-    sauterSeparateurs();
+	}
+	sauterSeparateurs();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 string LecteurSymbole::motSuivant() {
-	static string  s;
-	s="";
-	if (isdigit(lc.getCarCour()))
-	{
+	static string s;
+	s = "";
+	if (isdigit(lc.getCarCour())) {
 		// c'est le début d'un entier
 		do {
-			s=s+lc.getCarCour();
+			s = s + lc.getCarCour();
 			lc.suivant();
 		} while (isdigit(lc.getCarCour()));
-	}
-	else if (lc.getCarCour() == '"')
-	{
-	    do {
-	        s += lc.getCarCour();
-	        lc.suivant();
-	    } while(lc.getCarCour() != '"');
-	    s+=lc.getCarCour();
-	    lc.suivant();
-	}
-	else if  ( lc.getCarCour() == '=' || lc.getCarCour() == '!' || lc.getCarCour() == '<' || lc.getCarCour() == '>')
-	{
-		do
-		{
+	} else if (lc.getCarCour() == '"') {
+		do {
+			s += lc.getCarCour();
+			lc.suivant();
+		} while (lc.getCarCour() != '"');
+		s += lc.getCarCour();
+		lc.suivant();
+	} else if (lc.getCarCour() == '=' || lc.getCarCour() == '!' || lc.getCarCour() == '<' || lc.getCarCour() == '>') {
+		do {
 			s += lc.getCarCour();
 			lc.suivant();
 		} while (lc.getCarCour() == '=');
-	}
-	else if (isalpha(lc.getCarCour()))
-	{
+	} else if (isalpha(lc.getCarCour())) {
 		// c'est le début d'un mot
 		do {
-			s=s+lc.getCarCour();
+			s = s + lc.getCarCour();
 			lc.suivant();
-		} while (isalpha(lc.getCarCour())  ||
-				 isdigit(lc.getCarCour()) ||
-				 lc.getCarCour()=='_');
-	}
-	else if (lc.getCarCour() == '+' || lc.getCarCour() == '-' || lc.getCarCour() == '*' || lc.getCarCour() == '/')
-	{
-		do
-		{
+		} while (isalpha(lc.getCarCour()) ||
+				isdigit(lc.getCarCour()) ||
+				lc.getCarCour() == '_');
+	} else if (lc.getCarCour() == '+' || lc.getCarCour() == '-' || lc.getCarCour() == '*' || lc.getCarCour() == '/') {
+		do {
 			s += lc.getCarCour();
 			lc.suivant();
 		} while (lc.getCarCour() == '+' || lc.getCarCour() == '-' || lc.getCarCour() == '=');
-	}
-	else if (lc.getCarCour()!=EOF)
-	// c'est un caractere special
+	} else if (lc.getCarCour() != EOF)
+		// c'est un caractere special
 	{
-		s=lc.getCarCour();
+		s = lc.getCarCour();
 		lc.suivant();
 	}
-    return s;
+	return s;
 }

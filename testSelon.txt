@@ -1,7 +1,7 @@
 debut
 	
-	i = 0;
-	# le cas defaut dois se produire
+	i = 6;
+	# le cas par défaut doit se produire
 	selon (i)
 		cas 1:
 			ecrire_ligne("Mauvais Accès (cas 1)");
@@ -13,12 +13,14 @@ debut
 			ecrire_ligne("Mauvais Accès (cas 5)");
 			stop;
 		defaut:
-			ecrire("Cas defaut executé i = "); ecrire_ligne(i);
+			ecrire("Cas par défaut executé, i = "); ecrire_ligne(i);
 			stop;
 	finselon;
 	
+	
 	ecrire("Entrez un chiffre compris entre 1 et 5 : "); lire(i);
-	# le cas 5 doit se produire
+	
+	# le cas entré au clavier doit se produire
 	selon (i)
 		cas 1:
 			ecrire_ligne("Vous avez tapé 1");
@@ -36,7 +38,9 @@ debut
 			ecrire_ligne("Vous avez tapé 5");
 			stop;
 		defaut:
-			ecrire("Le chiffre n'est pas compris entre 1 et 5... ("); ecrire(i); ecrire_ligne(")");
+			ecrire("Le chiffre n'est pas compris entre 1 et 5... (");
+			ecrire(i);
+			ecrire_ligne(")");
 			stop;
 	finselon;
 

@@ -1,3 +1,22 @@
 debut
-
-fin;
+	
+	i = 0; a = 0; somme = 0;
+	ecrire_ligne("Boucle tant que i != 10 : ");
+	tq ((i != 10))
+		ecrire ("Entrez le chiffre 10 pour la variable i : ");
+		lire(i);
+	fintq;
+	
+	alaligne(2);
+	
+	i = 0;
+	ecrire_ligne("Boucle tant que i < 5 : ");
+	tq ((i < 5))
+		ecrire ("Entrez un chiffre : ");
+		lire(a);
+		somme += a;
+		i++;
+	fintq;
+	
+	ecrire("La somme de vos 5 chiffres est : ");ecrire_ligne(somme);
+fin

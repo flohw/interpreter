@@ -1,3 +1,40 @@
 debut
-
-fin;
+	menu = 0;
+	a = 0; b = 0;
+	faire
+		ecrire_ligne("*******Calculatrice*******");
+		ecrire_ligne("1. Addition");
+		ecrire_ligne("2. Soustraction");
+		ecrire_ligne("3. Multiplication");
+		ecrire_ligne("4. Division");
+		ecrire_ligne("0. Quitter");
+		ecrire_ligne("**************************");
+		faire
+			ecrire("Choix ? (de 0 à 4) ");
+			lire(menu);
+		jusqua (((menu < 0) ou (menu > 4)));
+		
+		selon(menu)
+			cas 1: 
+				ecrire("Premier nombre pour l'addition : "); lire(a);
+				ecrire("Deuxieme nombre pour l'addition : "); lire(b);
+				ecrire("Résultat : ");ecrire_ligne(a+b);
+				stop;
+			cas 2: 
+				ecrire("Premier nombre pour la soustraction : "); lire(a);
+				ecrire("Deuxieme nombre pour la soustraction : "); lire(b);
+				ecrire("Résultat : ");ecrire_ligne(a-b);
+				stop;
+			cas 3: 
+				ecrire("Premier nombre pour la multiplication : "); lire(a);
+				ecrire("Deuxieme nombre pour la multiplication : "); lire(b);
+				ecrire("Résultat : ");ecrire_ligne(a*b);
+				stop;
+			cas 4: 
+				ecrire("Nombre divisé : "); lire(b);
+				ecrire("Nombre diviseur : "); lire(a);
+				ecrire("Résultat : ");ecrire_ligne(b/a);
+				stop;
+		finselon;
+	jusqua ((menu != 0));
+fin

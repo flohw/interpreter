@@ -5,20 +5,23 @@
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
+
 LecteurPhraseSimple::LecteurPhraseSimple(string nomFich) :
-	ls(nomFich) {
+ls(nomFich) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::analyse() {
 	programme();
 	cout << "Syntaxe correcte." << endl;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::programme() {
-// <programme> ::= debut <seqInst> fin FIN_FICHIER
-	
+	// <programme> ::= debut <seqInst> fin FIN_FICHIER
+
 	sauterSymCour("debut");
 	seqInst();
 	sauterSymCour("fin");
@@ -26,8 +29,9 @@ void LecteurPhraseSimple::programme() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::seqInst() {
-// <seqInst> ::= <inst> ; { <inst> ; }
+	// <seqInst> ::= <inst> ; { <inst> ; }
 	do {
 		inst();
 		sauterSymCour(";");
@@ -37,11 +41,12 @@ void LecteurPhraseSimple::seqInst() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::inst() {
-// <inst> ::= <affectation> | <instSi> || <instTq> || <instRepeter> || <insEcrire>
-	if (ls.getSymCour() == "ecrire")	// SI INSTRUCTION ECRIRE
+	// <inst> ::= <affectation> | <instSi> || <instTq> || <instRepeter> || <insEcrire>
+	if (ls.getSymCour() == "ecrire") // SI INSTRUCTION ECRIRE
 		instEcrire();
-	else if (ls.getSymCour() == "si")		// SI INSTRUCTION SI
+	else if (ls.getSymCour() == "si") // SI INSTRUCTION SI
 		instSi();
 	else if (ls.getSymCour() == "tq")
 		instTq();
@@ -56,6 +61,7 @@ void LecteurPhraseSimple::inst() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::instTq() {
 	// <instTq> ::= tq ( <expBool> ) { <seqInst> } fintq
 	sauterSymCour("tq");
@@ -67,7 +73,7 @@ void LecteurPhraseSimple::instTq() {
 }
 
 void LecteurPhraseSimple::instPour() {
-// <instPour> ::= pour (<affectation> ; <expBool> ; <affectation>) <seqInst> finpour
+	// <instPour> ::= pour (<affectation> ; <expBool> ; <affectation>) <seqInst> finpour
 	sauterSymCour("pour");
 	sauterSymCour("(");
 	affectation();
@@ -81,6 +87,7 @@ void LecteurPhraseSimple::instPour() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::instFaire() {
 	// <instFaire> ::= faire <seqInst> jusqua ( <expBool> )
 	sauterSymCour("faire");
@@ -92,22 +99,21 @@ void LecteurPhraseSimple::instFaire() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::instSi() {
 	sauterSymCour("si");
 	sauterSymCour("(");
 	expression();
 	sauterSymCour(")");
 	seqInst();
-	while (ls.getSymCour() == "sinonsi")
-	{
+	while (ls.getSymCour() == "sinonsi") {
 		sauterSymCour("sinonsi");
 		sauterSymCour("(");
 		expBool();
 		sauterSymCour(")");
 		seqInst();
 	}
-	if (ls.getSymCour() == "sinon")
-	{
+	if (ls.getSymCour() == "sinon") {
 		sauterSymCour("sinon");
 		seqInst();
 	}
@@ -115,8 +121,9 @@ void LecteurPhraseSimple::instSi() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::instEcrire() {
-// <instEcrire> ::= ecrire(<chaine> | <expression>)
+	// <instEcrire> ::= ecrire(<chaine> | <expression>)
 	sauterSymCour("ecrire");
 	sauterSymCour("(");
 	if (ls.getSymCour() == "<CHAINE>")
@@ -127,8 +134,9 @@ void LecteurPhraseSimple::instEcrire() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::instLire() {
-// <instLire> ::= lire(<variable>)
+	// <instLire> ::= lire(<variable>)
 	sauterSymCour("lire");
 	sauterSymCour("(");
 	sauterSymCour("<VARIABLE>");
@@ -136,14 +144,16 @@ void LecteurPhraseSimple::instLire() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::chaine() {
-// <chaine> ::= "<des mots>"
+	// <chaine> ::= "<des mots>"
 	sauterSymCour("<CHAINE>");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::affectation() {
-// <affectation> ::= <variable> = <expression>
+	// <affectation> ::= <variable> = <expression>
 
 	sauterSymCour("<VARIABLE>");
 	sauterSymCour("=");
@@ -151,57 +161,58 @@ void LecteurPhraseSimple::affectation() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::expression() {
-// <expression> ::= <terme> { <opAdd> <terme> }
+	// <expression> ::= <terme> { <opAdd> <terme> }
 	terme();
-	while (ls.getSymCour()=="+" || ls.getSymCour()=="-") {
+	while (ls.getSymCour() == "+" || ls.getSymCour() == "-") {
 		opAdd();
 		terme();
 	}
 }
 
 void LecteurPhraseSimple::opAdd() {
-	if (ls.getSymCour()=="+" || ls.getSymCour()=="-")
+	if (ls.getSymCour() == "+" || ls.getSymCour() == "-")
 		ls.suivant();
 	else
 		erreur("<opAdd>");
 }
 
 void LecteurPhraseSimple::opMult() {
-	if (ls.getSymCour()=="*" || ls.getSymCour()=="/")
+	if (ls.getSymCour() == "*" || ls.getSymCour() == "/")
 		ls.suivant();
 	else
 		erreur("<opMult>");
 }
 
 void LecteurPhraseSimple::terme() {
-// <terme> ::= <facteur> { <opMult> <facteur> }
+	// <terme> ::= <facteur> { <opMult> <facteur> }
 	facteur();
-	while (ls.getSymCour()=="*" || ls.getSymCour()=="/") {
+	while (ls.getSymCour() == "*" || ls.getSymCour() == "/") {
 		opMult();
 		facteur();
 	}
 }
 
 void LecteurPhraseSimple::termeBool() {
-// <termeBool> ::= <relation> { <opEt> <relation> }
+	// <termeBool> ::= <relation> { <opEt> <relation> }
 	relation();
-	while (ls.getSymCour() == "et")
-	{
+	while (ls.getSymCour() == "et") {
 		opEt();
 		relation();
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::facteur() {
-// <facteur> ::= <entier>  |  <variable>  | <opUnaire> <expBool>  |  ( <expBool> )
-	if (ls.getSymCour()=="<VARIABLE>" || ls.getSymCour()=="<ENTIER>")
+	// <facteur> ::= <entier>  |  <variable>  | <opUnaire> <expBool>  |  ( <expBool> )
+	if (ls.getSymCour() == "<VARIABLE>" || ls.getSymCour() == "<ENTIER>")
 		ls.suivant();
-	else if (ls.getSymCour()=="-" || ls.getSymCour() == "non") {
+	else if (ls.getSymCour() == "-" || ls.getSymCour() == "non") {
 		opUnaire();
 		expBool();
-	} else if (ls.getSymCour()=="(") {
+	} else if (ls.getSymCour() == "(") {
 		sauterSymCour("(");
 		expBool();
 		sauterSymCour(")");
@@ -210,25 +221,24 @@ void LecteurPhraseSimple::facteur() {
 }
 
 void LecteurPhraseSimple::expBool() {
-// <expBool> ::= <termeBool> { <opOu> <termeBool> }
+	// <expBool> ::= <termeBool> { <opOu> <termeBool> }
 	termeBool();
-	while (ls.getSymCour() == "ou")
-	{
+	while (ls.getSymCour() == "ou") {
 		opOu();
 		termeBool();
 	}
 }
 
-void LecteurPhraseSimple::opEt(){
-// <opEt> ::= et
+void LecteurPhraseSimple::opEt() {
+	// <opEt> ::= et
 	if (ls.getSymCour() == "et")
 		ls.suivant();
 	else
 		erreur("<opEt>");
 }
 
-void LecteurPhraseSimple::opOu(){
-// <opOu> ::= ou
+void LecteurPhraseSimple::opOu() {
+	// <opOu> ::= ou
 	if (ls.getSymCour() == "ou")
 		ls.suivant();
 	else
@@ -236,31 +246,34 @@ void LecteurPhraseSimple::opOu(){
 }
 
 void LecteurPhraseSimple::relation() {
-// <relation> ::= <expression> { <opRel> <expression> }
+	// <relation> ::= <expression> { <opRel> <expression> }
 	expression();
-	while (ls.getSymCour()=="==" || ls.getSymCour()=="!=" || ls.getSymCour()=="<=" ||
-		ls.getSymCour()==">=" || ls.getSymCour()=="<" || ls.getSymCour()==">") {
+	while (ls.getSymCour() == "==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<=" ||
+			ls.getSymCour() == ">=" || ls.getSymCour() == "<" || ls.getSymCour() == ">") {
 		opRel();
 		expression();
 	}
 }
+
 void LecteurPhraseSimple::opRel() {
-// <opRel> ::= == | != | < | > | <= | >=
-	 if (ls.getSymCour()=="==" || ls.getSymCour()=="!=" || ls.getSymCour()=="<=" ||
-		ls.getSymCour()==">=" || ls.getSymCour()=="<" || ls.getSymCour()==">")
+	// <opRel> ::= == | != | < | > | <= | >=
+	if (ls.getSymCour() == "==" || ls.getSymCour() == "!=" || ls.getSymCour() == "<=" ||
+			ls.getSymCour() == ">=" || ls.getSymCour() == "<" || ls.getSymCour() == ">")
 		ls.suivant();
 	else
 		erreur("<opRel>");
 }
+
 void LecteurPhraseSimple::opUnaire() {
-// <opUnaire> ::= non | -
-	if (ls.getSymCour()=="-" || ls.getSymCour()=="non")
+	// <opUnaire> ::= non | -
+	if (ls.getSymCour() == "-" || ls.getSymCour() == "non")
 		ls.suivant();
 	else
 		erreur("<opUnaire>");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::testerSymCour(string ch) {
 	if (ls.getSymCour() != ch) {
 		cout << endl << "-------- Erreur ligne " << ls.getLigne()
@@ -272,12 +285,14 @@ void LecteurPhraseSimple::testerSymCour(string ch) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::sauterSymCour(string ch) {
 	testerSymCour(ch);
 	ls.suivant();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
 void LecteurPhraseSimple::erreur(string mess) {
 	cout << endl << "-------- Erreur ligne " << ls.getLigne() << " - Colonne "
 			<< ls.getColonne() << endl << "   Attendu : " << mess << endl

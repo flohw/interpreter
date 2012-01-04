@@ -1,0 +1,28 @@
+debut
+	
+	k = 2;
+	ecrire("Initialisation :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k++;
+	ecrire("Incrémentation (k++) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k += 5;
+	ecrire("Incrémentation (k += 5) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k--;
+	ecrire("Décrementation (k--) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k *= 4;
+	ecrire("Multiplication (k *= 4) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k /= 2;
+	ecrire("Division (k /= 2) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	k -= 5;
+	ecrire("Décrementation (k -= 5) :"); alaligne();
+	ecrire("k = "); ecrire_ligne(k);
+	
+	ecrire("Test de saut de lignes : 5 sauts");alaligne(5);
+	ecrire("Fin de Test");
+	
+fin

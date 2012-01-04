@@ -1,3 +1,14 @@
 debut
-
-fin;
+	
+	ecrire_ligne("Boucle pour i = 0 jusqu'a i <= 10");
+	pour (i = 0; i <= 10; i++)
+		ecrire("i = "); ecrire_ligne(i);
+	finpour;
+	
+	alaligne(2);
+	
+	ecrire_ligne("Boucle pour i = 0 jusqu'a i < 10");
+	pour (i = 0; i < 10; i++)
+		ecrire("i = "); ecrire_ligne(i);
+	finpour;
+fin

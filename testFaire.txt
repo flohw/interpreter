@@ -1,3 +1,11 @@
 debut
+	
+	i = 1;
+	ecrire_ligne("i = 1");
+	faire
+		ecrire ("Entrez une valeur pour i comprise entre 1 et 5 : ");
+		lire(i);
+		ecrire ("i = "); ecrire_ligne(i);
+	jusqua (((i < 1) ou (i > 5)));
 
-fin;
+fin

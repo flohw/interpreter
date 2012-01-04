@@ -170,12 +170,15 @@ void NoeudEcrire::translateAda(ostream& s, unsigned short indentation) {
 }
 void NoeudEcrire::translatePhp(ostream& s, unsigned short indentation) {
 	Noeud::translatePhp(s, indentation);
-	s << "echo '";
+	s << "echo ";
 	if (typeid(*valeur) == typeid(SymboleValue))
-		s << ((SymboleValue*)valeur)->getChaine().substr(1, ((SymboleValue*)valeur)->getChaine().size()-2);
+		s << "$" << ((SymboleValue*)valeur)->getChaine().substr(1, ((SymboleValue*)valeur)->getChaine().size()-2);
 	else
+	{
+		s << "'";
 		valeur->translatePhp(s, 0);
-	s << "'";
+		s << "'";
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -424,10 +427,6 @@ NoeudSwitch::NoeudSwitch(vector<Noeud*> ent, vector<Noeud*> seq, Noeud* var) :
 int NoeudSwitch::getValeur() {
 	bool passe = false;
 	unsigned int i = 0;
-	cout << sequence.size() << endl;
-	fflush(stdout);
-	cout << entiers.size() << endl;
-	fflush(stdout);
 	
 	while (i < sequence.size() and !passe)
 	{

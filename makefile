@@ -1,5 +1,5 @@
 GCC = g++ -Wall -W -O
-all: TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre
+all: TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre interpreteur
 
 ######################################################################################################
 # etape 1 - lecteur de symboles 
@@ -69,5 +69,17 @@ TestLecteurPhraseAvecArbre.o: TestLecteurPhraseAvecArbre.cc LecteurPhraseAvecArb
 TestLecteurPhraseAvecArbre: $(ObjTestLecteurPhraseAvecArbre)
 	$(GCC) -o TestLecteurPhraseAvecArbre $(ObjTestLecteurPhraseAvecArbre)
 
+######################################################################################################
+# etape 5 - Notre programme de test
+######################################################################################################
+
+ObjInterpreteur = LecteurCaractere.o Symbole.o LecteurSymbole.o SymboleValue.o TableSymboles.o Arbre.o LecteurPhraseAvecArbre.o interpreteur.o
+
+interpreteur.o: interpreteur.cpp LecteurPhraseAvecArbre.h
+	$(GCC) -c interpreteur.cpp
+	
+interpreteur: $(ObjInterpreteur)
+	$(GCC) -o interpreteur $(ObjInterpreteur)
+
 clean:
-	rm *.o TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre
+	rm *.o TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre interpreteur

@@ -604,7 +604,7 @@ void NoeudIncrementation::translatePhp(ostream& s, unsigned short indentation) {
 	s << "$" << var->getChaine() << incrementation.getChaine();
 
 	if (expression != NULL and typeid (*expression) == typeid (SymboleValue))
-		s << " " << ((SymboleValue*) expression)->getChaine();
+		s << " $" << ((SymboleValue*) expression)->getChaine();
 	else if (expression != NULL)
 		expression->translateAda(s);
 }

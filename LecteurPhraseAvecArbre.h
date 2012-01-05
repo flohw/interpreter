@@ -50,7 +50,7 @@ private:
 	Noeud* instSautLigne(); //	<instSautLigne> ::= alaligne ( [<ENTIER>] )
 	Noeud* instEcrLigne(); //	<instEcrLigne> ::= <instEcrire> + NoeudSautLigne
 
-	Noeud* affectation(); //	<affectation> ::= <variable> = <expression>
+	Noeud* affectation(); // <affectation> ::= <variable> = <expression> || <variable> "++" | "--" || <variable> += <expression> || <variable> -= <expression> 
 	Noeud* expression(); //	<expression> ::= <terme> { <opAdd> <terme> }
 	Noeud* expBool(); //	<expBool> ::= <termeBool> { <opOu> <termeBool> }
 	Noeud* relation(); //	<relation> ::= <expression> { <opRel> <expression> }

@@ -1,5 +1,8 @@
 debut
 	
+	# Ici on montre l'instruction pour, et on teste par la meme occasion
+	# les opérateurs booléens
+
 	ecrire_ligne("Boucle pour i = 0 jusqu'a i <= 10");
 	pour (i = 0; i <= 10; i++)
 		ecrire("i = "); ecrire_ligne(i);

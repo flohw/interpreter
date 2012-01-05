@@ -1,6 +1,7 @@
 debut
 	
 	i = 0; a = 0; somme = 0;
+	# Quoi qu'on tape au clavier, si ce n'est pas 10, on ne sort pas de la boucle
 	ecrire_ligne("Boucle tant que i != 10 : ");
 	tq ((i != 10))
 		ecrire ("Entrez le chiffre 10 pour la variable i : ");

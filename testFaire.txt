@@ -2,6 +2,11 @@ debut
 	
 	i = 1;
 	ecrire_ligne("i = 1");
+	# La variable i est initialisé à 1 donc pas compris strictement entre 1 et 5, or 
+	# on entre tout de meme dans la boucle grace au "faire jusqua"
+	# Le but est de vérifier que tant que l'on entre une valeur non comprise entre
+	# 1 et 5, on ne sort pas de la boucle.
+
 	faire
 		ecrire ("Entrez une valeur pour i comprise entre 1 et 5 : ");
 		lire(i);

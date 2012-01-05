@@ -1,0 +1,54 @@
+Personnalisation du projet :
+
+- Des mots clés en français et compréhensibles de tous.
+- Une fonction alaligne() qui saute une ligne si rien n'est passé en paramètre, et qui saute X lignes si X est passé en paramètre à la fonction.
+- Une fonction ecrire_ligne() qui écrit ce qui est passé en paramètre (une chaine de caractère ou une variable), puis qui saute une ligne.
+- Des instructions supplémentaires (non présentes dans certains langages) telles que :
+i++,
+i--,
+i += <VARIABLE> ou <VALEUR>,
+i -= <VARIABLE> ou <VALEUR>,
+i *= <VARIABLE> ou <VALEUR>,
+i /= <VARIABLE> ou <VALEUR>,
+
+- Il est possible de traduire notre langage dans deux langages différents, en ADA et en PHP.
+
+
+Grammaire de notre interpreteur :
+
+//	<programme> ::= debut <seqInst> fin FIN_FICHIER
+//	<seqInst> ::= <inst> ; { <inst> ; }
+//	<inst> ::= <affectation>
+
+//	<instTq> ::= tq ( <expBool> ) <seqInst> fintq
+//	<instFaire> ::= faire <seqInst> jusqua ( <expBool> )
+//	<instPour> ::= pour ( <affectation> ; <expBool> ; <affectation> ) <seqInst> finpour
+//	<instEcrire> ::= ecrire | ecrire_ligne(<chaine> | <expression>)
+//	<instLire> ::= lire(<VARIABLE>)
+//	<instSi> ::= si ( <expBool> ) <seqInst> { sinonsi ( <expBool> ) <seqInst> } [ sinon <seqInst> ] finsi
+//	<instSelon> ::= selon(<VARIABLE>) { cas <ENTIER>: [<seqInst> stop;} [defaut: <seqInst> stop;] finselon
+//	<instSautLigne> ::= alaligne ( [<ENTIER>] )
+//	<instEcrLigne> ::= <instEcrire> + NoeudSautLigne
+
+//	<affectation> ::= <variable> = <expression> | <variable> "++" | "--" | <variable> += <expression> | <variable> -= <expression> | <variable> /= <expression> | <variable> *= <expression> 
+//	<expression> ::= <terme> { <opAdd> <terme> }
+//	<expBool> ::= <termeBool> { <opOu> <termeBool> }
+//	<relation> ::= <expression> { <opRel> <expression> }
+//	<terme> ::= <facteur> { <opMult> <facteur> }
+//	<termeBool> ::= <relation> { <opEt> <relation> }
+//	<facteur> ::= <entier>  |  <variable>  |  - <facteur>  |  ( <expression> )
+
+//	<opAdd> ::= + | -
+//	<opMult> ::= * | /
+//	<opEt> ::= et
+//	<opOu> ::= ou
+//	<opRel> ::= == | != | < | > | <= | >=
+//	<opUnaire> ::= non | -
+
+
+
+Problèmes rencontrés : 
+
+- Traduction de la boucle for incorrecte en ADA en raison de l'implémentation d'une boucle en ADA.
+- Expressions booléennes OBLIGATOIREMENT entre parenthèses, ce qui surcharge certaines conditions.
+- Problème de traduction en PHP, les variables ne s'affichent pas toujours, et d'autres fois le $ ne s'affiche pas avec la variable.

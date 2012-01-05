@@ -51,4 +51,6 @@ Problèmes rencontrés :
 
 - Traduction de la boucle for incorrecte en ADA en raison de l'implémentation d'une boucle en ADA.
 - Expressions booléennes OBLIGATOIREMENT entre parenthèses, ce qui surcharge certaines conditions.
-- Problème de traduction en PHP, les variables ne s'affichent pas toujours, et d'autres fois le $ ne s'affiche pas avec la variable.
+- Problème de traduction en PHP, le $ ne s'affiche pas avec la variable lors d'un écrire, ecrire_ligne ou lire.
+- La variable ne s'affiche pas correctement dans le champs de saisie en PHP.
+- La gestion des variables $_POST n'est pas faite en PHP

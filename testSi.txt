@@ -1,6 +1,8 @@
 debut
 
 	j = 3;
+	ecrire_ligne("On initialise j a 3");
+	ecrire_ligne("On teste la variable j");
 
 	# on doit entrer dans le premier "sinonsi"
 	si ((j != 3))

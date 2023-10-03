@@ -82,4 +82,4 @@ interpreteur: $(ObjInterpreteur)
 	$(GCC) -o interpreteur $(ObjInterpreteur)
 
 clean:
-	rm *.o TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre interpreteur
+	rm -f *.o TestLecteurSymbole TestLecteurPhraseSimple TestLecteurPhraseAvecTable TestLecteurPhraseAvecArbre interpreteur
